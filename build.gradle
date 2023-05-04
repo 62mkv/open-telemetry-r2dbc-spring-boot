@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'application'
     id 'org.springframework.boot' version '2.7.11'
     id 'io.spring.dependency-management' version '1.0.15.RELEASE'
 }
@@ -34,8 +35,21 @@ dependencies {
     testImplementation 'io.projectreactor:reactor-test'
 
     implementation 'org.liquibase:liquibase-core:4.12.0'
+
+    implementation platform('io.micrometer:micrometer-tracing-bom:1.0.3')
+    implementation 'io.micrometer:micrometer-tracing'
+    implementation 'io.micrometer:micrometer-tracing-bridge-otel'
+    implementation 'io.opentelemetry:opentelemetry-exporter-zipkin:1.24.0'
+
 }
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+application {
+    applicationDefaultJvmArgs = [
+            '-javaagent:agent/opentelemetry-javaagent.jar',
+            '-Dotel.traces.exporter=zipkin'
+    ]
 }
