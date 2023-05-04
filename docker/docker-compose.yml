@@ -1,0 +1,31 @@
+version: "3.9"
+services:
+  toxiproxy:
+    image: "shopify/toxiproxy"
+    networks:
+      - backend
+    ports:
+       - "8474:8474"
+       - "5432:5432"
+  # We created proxy configuration from another ephermal container
+  toxiproxy-config:
+    image: "shopify/toxiproxy"
+    networks:
+      - backend
+    entrypoint: > 
+      sh -c "/go/bin/toxiproxy-cli -h toxiproxy:8474 delete postgres;
+            /go/bin/toxiproxy-cli -h toxiproxy:8474 create postgres --listen 0.0.0.0:5432 --upstream postgres:5432;
+            /go/bin/toxiproxy-cli -h toxiproxy:8474 toxic add -t latency -n myToxic -a latency=50 postgres"
+
+  postgres:
+    image: postgres:14.4
+    networks:
+      - backend
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=qwerty
+
+networks:
+  backend:

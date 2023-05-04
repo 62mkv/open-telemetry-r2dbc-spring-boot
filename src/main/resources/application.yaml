@@ -1,0 +1,11 @@
+spring:
+  r2dbc:
+    url: r2dbc:proxy:pool:postgresql://localhost:5432
+    username: postgres
+    password: qwerty
+  liquibase:
+    url: jdbc:postgresql://localhost/postgres
+    user: postgres
+    password: qwerty
+    change-log: classpath:db/changelog/db.changelog-master.xml
+
