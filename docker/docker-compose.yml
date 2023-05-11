@@ -27,5 +27,12 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=qwerty
 
+  zipkin:
+    image: openzipkin/zipkin
+    networks:
+      backend:
+    ports:
+      - "9411:9411"
+
 networks:
   backend:
